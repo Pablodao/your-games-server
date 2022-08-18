@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const userSchema = new Schema(
+const commentSchema = new Schema(
   {
     content: {
       type: String,
@@ -40,6 +40,6 @@ const userSchema = new Schema(
   }
 );
 
-const Comment = model("Comment", userSchema);
+const Comment = model("Comment", commentSchema);
 
 module.exports = Comment;

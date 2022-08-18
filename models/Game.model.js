@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const userSchema = new Schema(
+const gameSchema = new Schema(
   {
     valoration: {
       type: string,
@@ -8,25 +8,28 @@ const userSchema = new Schema(
       default: " ☆☆☆☆☆ ",
     },
     isFavourite: {
-        type: Boolean,
+      type: Boolean,
       default: false,
     },
-    id:{
-        type:String,
-        required:true
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-    name:{
-
-        type:String,
-        required:true
+    id: {
+      type: String,
+      required: true,
     },
-    image:String
+    name: {
+      type: String,
+      required: true,
+    },
+    image: String,
   },
   {
     timestamps: true,
   }
 );
 
-const Game = model("Game", userSchema);
+const Game = model("Game", gameSchema);
 
 module.exports = Game;
