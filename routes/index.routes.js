@@ -9,9 +9,11 @@ router.get("/", (req, res, next) => {
 const authRoutes = require("./auth.routes")
 router.use("/auth", authRoutes)
 
-
-module.exports = router;
+//* User routes 
+const profileRoutes = require("./profile.routes")
+router.use("/profile", profileRoutes)
 
 //* Games routes
 
-//* User routes 
+module.exports = router;
+

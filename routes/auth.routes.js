@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const isAuthenticated = require("../middlewares/isAuthenticated");
+
 //* POST "/api/auth/signup" => Create user in DB
 router.post("/signup", async (req, res, next) => {
   console.log("req.body /signup", req.body);
