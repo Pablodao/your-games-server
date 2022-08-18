@@ -23,7 +23,6 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
-    comments: [""],
     rank: {
       type: String,
       enum: ["bronze, silver, gold"],
