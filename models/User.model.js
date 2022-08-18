@@ -23,6 +23,10 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
+    avatar: {
+      type: String,
+      default: ""
+    },
     rank: {
       type: String,
       enum: ["bronze, silver, gold"],
@@ -46,6 +50,10 @@ const userSchema = new Schema(
         ref: "Comment",
       },
     ],
+    accountClosed :{
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
