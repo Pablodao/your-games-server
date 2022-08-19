@@ -117,20 +117,20 @@ router.post("/login", async (req, res, next) => {
       email: foundUser.email,
     };
     console.log("payload", payload);
-
+    //TODO Cambiar el tiempo de expiracion 
     const authToken = jwt.sign(
     payload,
     process.env.TOKEN_SECRET,
-    {algorithm: "HS256",expiresIn: "6h",})
+    {algorithm: "HS256",expiresIn: "200h",})
     ;
     console.log("authToken login", authToken);
-    res.json({ authToken: authToken });
+    res.status(400).json({ authToken: authToken });
   } catch (error) {
     console.log("Login error", error);
     next(error);
   }
 });
-// GET "./api/auth/verify" => Verify user is validated and active
+//* GET "./api/auth/verify" => Verify user is validated and active
 router.get("/verify", isAuthenticated, (req, res, next) => {
   console.log("req.payload verify ", req.payload);
   res.json(req.payload);
