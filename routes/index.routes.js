@@ -17,5 +17,9 @@ router.use("/profile", profileRoutes)
 const gamesRoutes = require("./games.routes")
 router.use("/games", gamesRoutes)
 
+//* Comment routes 
+const commentsRoutes = require("./comments.routes")
+router.use("/comments", commentsRoutes)
+
 module.exports = router;
 
