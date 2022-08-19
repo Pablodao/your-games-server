@@ -3,9 +3,9 @@ const { Schema, model } = require("mongoose");
 const gameSchema = new Schema(
   {
     valoration: {
-      type: string,
-      enum: ["☆☆☆☆☆, ★☆☆☆☆, ★★☆☆☆, ★★★☆☆ ,★★★★☆, ★★★★★"],
-      default: " ☆☆☆☆☆ ",
+      type: String,
+      enum: ["☆☆☆☆☆", " ★☆☆☆☆", " ★★☆☆☆", "★★★☆☆", "★★★★☆", "★★★★★"],
+      default: "☆☆☆☆☆",
     },
     isFavourite: {
       type: Boolean,
@@ -17,6 +17,7 @@ const gameSchema = new Schema(
     },
     id: {
       type: String,
+      unique: true,
       required: true,
     },
     name: {
