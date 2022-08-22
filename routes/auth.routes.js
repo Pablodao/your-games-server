@@ -13,24 +13,22 @@ router.post("/signup", async (req, res, next) => {
   //! GC
   //! Empty fields
   if (!username) {
-    res
-      .status(400)
-      .json({ usernameErrorMessage: "Nombre de usuario requerido" });
+    res.status(400).json({ errorMessage: "Nombre de usuario requerido" });
     return;
   }
   if (!email) {
-    res.status(400).json({ emailErrorMessage: "Email requerido" });
+    res.status(400).json({ errorMessage: "Email requerido" });
     return;
   }
   if (!password) {
-    res.status(400).json({ passwordErrorMessage: "Contraseña requerida " });
+    res.status(400).json({ errorMessage: "Contraseña requerida" });
     return;
   }
   //! Password Regex
   const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,64})/;
   if (passwordRegex.test(password) === false) {
     res.status(400).json({
-      passwordErrorMessage:
+      errorMessage:
         "La contraseña debe contener entre 8 y 64 caracteres, mínimo una mayúscula, una minúscula, un número y un carácter especial ",
     });
     return;
@@ -40,7 +38,7 @@ router.post("/signup", async (req, res, next) => {
     /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/;
   if (emailRegex.test(email) === false) {
     res.status(400).json({
-      emailErrorMessage: "Dirección de correo inválida",
+      errorMessage: "Dirección de correo inválida",
     });
     return;
   }
@@ -49,13 +47,13 @@ router.post("/signup", async (req, res, next) => {
     //! Email already exist
     const foundUserByEmail = await User.findOne({ email });
     if (foundUserByEmail !== null) {
-      res.status(400).json({ emailErrorMessage: "Correo electrónico en uso" });
+      res.status(400).json({ errorMessage: "Correo electrónico en uso" });
     }
     //! Username already exist
     const foundUserByUsername = await User.findOne({ username });
     if (foundUserByUsername !== null) {
       res.status(400).json({
-        usernameErrorMessage: "El nombre de usuario ya se encuentra en uso",
+        errorMessage: "El nombre de usuario ya se encuentra en uso",
       });
     }
 
@@ -86,11 +84,11 @@ router.post("/login", async (req, res, next) => {
   if (!access) {
     res
       .status(400)
-      .json({ accessErrorMessage: "Introduzca su email o Nombre de usuario" });
+      .json({ errorMessage: "Introduzca su email o Nombre de usuario" });
     return;
   }
   if (!password) {
-    res.status(400).json({ passwordErrorMessage: "Introduzca su contraseña" });
+    res.status(400).json({ errorMessage: "Introduzca su contraseña" });
     return;
   }
 
@@ -101,7 +99,7 @@ router.post("/login", async (req, res, next) => {
     });
     console.log("foundUser login ", foundUser);
     if (foundUser === null) {
-      res.status(400).json({ accessErrorMessage: "Usuario no encontrado" });
+      res.status(400).json({ errorMessage: "Usuario no encontrado" });
       return;
     }
     //! Valid password
@@ -117,14 +115,13 @@ router.post("/login", async (req, res, next) => {
       email: foundUser.email,
     };
     console.log("payload", payload);
-    //TODO Cambiar el tiempo de expiracion 
-    const authToken = jwt.sign(
-    payload,
-    process.env.TOKEN_SECRET,
-    {algorithm: "HS256",expiresIn: "200h",})
-    ;
+    //TODO Cambiar el tiempo de expiracion
+    const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+      algorithm: "HS256",
+      expiresIn: "200h",
+    });
     console.log("authToken login", authToken);
-    res.status(400).json({ authToken: authToken });
+    res.status(200).json({ authToken: authToken });
   } catch (error) {
     console.log("Login error", error);
     next(error);
