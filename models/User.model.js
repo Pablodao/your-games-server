@@ -5,7 +5,7 @@ const userSchema = new Schema(
     name: {
       type: String,
       unique: true,
-      default:""
+      default: "",
     },
 
     username: {
@@ -26,13 +26,12 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String,
-      default: ""
+      default: "",
     },
     rank: {
       type: String,
       enum: ["bronze, silver, gold"],
     },
-
     favourites: [
       {
         type: Schema.Types.ObjectId,
@@ -51,10 +50,10 @@ const userSchema = new Schema(
         ref: "Comment",
       },
     ],
-    accountClosed :{
+    accountClosed: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   {
     timestamps: true,
