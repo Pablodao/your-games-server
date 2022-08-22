@@ -41,9 +41,10 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
 //* PATCH "/api/comments/:commentId" => Edit one comment from the DB
 router.patch("/:commentId", isAuthenticated, async (req, res, next) => {
   const { commentId } = req.params;
-  const { content } = req.body;
+  const { content, title } = req.body;
   try {
     await Comment.findByIdAndUpdate(commentId, {
+      title: title,
       content: content,
       isEdited: true,
     });
