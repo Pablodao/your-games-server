@@ -8,7 +8,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 router.get("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
   try {
-    const comments = await Comment.find({ game: gameId });
+    const comments = await Comment.find({ game: gameId }).populate("creator");
     console.log("Comments get ", comments);
     res.json(comments);
   } catch (error) {
@@ -20,14 +20,17 @@ router.get("/:gameId", isAuthenticated, async (req, res, next) => {
 //* POST "/api/comments/:gameId" => Add one comment to the DB
 router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
-  const { content } = req.body;
+  const { content, title } = req.body;
   const { _id } = req.payload;
+  console.log("req.body post new comment ", req.body);
   try {
     const newComment = await Comment.create({
+      title,
       content,
       creator: _id,
       game: gameId,
     });
+    console.log("newComment", newComment);
     res.status(200).json(newComment);
   } catch (error) {
     console.log(error);
@@ -45,6 +48,36 @@ router.patch("/:commentId", isAuthenticated, async (req, res, next) => {
       isEdited: true,
     });
     res.json({ message: "comment edited correctly" });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+//* PATCH "/api/comments/:commentId/like"
+router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
+  const { commentId } = req.params;
+  const { likes } = req.body;
+  try {
+    await Comment.findByIdAndUpdate(commentId, {
+      likes,
+    });
+    res.json({ message: "comment liked" });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+//* PATCH "/api/comments/:commentId/dislike"
+router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
+  const { commentId } = req.params;
+  const { dislikes } = req.body;
+  try {
+    await Comment.findByIdAndUpdate(commentId, {
+      dislikes,
+    });
+    res.json({ message: "comment liked" });
   } catch (error) {
     console.log(error);
     next(error);
