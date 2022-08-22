@@ -2,6 +2,10 @@ const { Schema, model } = require("mongoose");
 
 const commentSchema = new Schema(
   {
+    title: {
+      type: String,
+      required: true,
+    },
     content: {
       type: String,
       required: true,
@@ -25,14 +29,6 @@ const commentSchema = new Schema(
     dislikes: {
       type: Number,
       default: 0,
-    },
-    isLiked: {
-      type: Boolean,
-      default: false,
-    },
-    isDisliked: {
-      type: Boolean,
-      default: false,
     },
   },
   {
