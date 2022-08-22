@@ -5,15 +5,14 @@ const Comment = require("../models/Comment.model");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
 //* POST "/api/games/:gameId" => Add one game to the DB
-router.post("/:gameId", isAuthenticated, async (req, res, next) => {
-  const { gameId } = req.params;
-  const { valoration, name, image } = req.body;
-  const { user } = req.payload;
+router.post("/", isAuthenticated, async (req, res, next) => {
+  const { valoration, isFavourite, user, id, name, image } = req.body;
   try {
     const newGame = await Game.create({
       valoration,
+      isFavourite,
       user,
-      id: gameId,
+      id,
       name,
       image,
     });
@@ -24,13 +23,12 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   }
 });
 
-
 //* GET "/api/games/:gameId" => Find one game in the DB
 router.get("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
 
   try {
-    const findGame = await Game.findOne({id: gameId}); // se ha cambiado el findById por findOne hasta rellenar la base de datos 
+    const findGame = await Game.findById(gameId);
     console.log(findGame);
     res.json(findGame);
   } catch (error) {
@@ -42,7 +40,7 @@ router.get("/:gameId", isAuthenticated, async (req, res, next) => {
 //* DELETE "/api/games/:gameId" => Delete one game from the DB
 router.delete("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
-  console.log(gameId);
+  console.log(gameId)
   try {
     await Game.findByIdAndDelete(gameId);
     res.status(200).json({ message: "Game deleted from the DB" });
