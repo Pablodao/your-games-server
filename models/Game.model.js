@@ -3,18 +3,21 @@ const { Schema, model } = require("mongoose");
 const gameSchema = new Schema(
   {
     valoration: {
-      type: String,
-      enum: ["☆☆☆☆☆", " ★☆☆☆☆", " ★★☆☆☆", "★★★☆☆", "★★★★☆", "★★★★★"],
-      default: "☆☆☆☆☆",
+      type: Number,
+      enum: [0, 1, 2, 3, 4, 5],
+      default: 0,
     },
-    isFavourite: {
-      type: Boolean,
-      default: false,
-    },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
+    //TODO borrar si no es necesaria
+    // isFavourite: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
     id: {
       type: String,
       unique: true,
