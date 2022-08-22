@@ -7,15 +7,11 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 //* POST "/api/games/:gameId" => Add one game to the DB
 router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
-  const { valoration, name, image } = req.body;
-  const { user } = req.payload;
+  //const { valoration, name, image } = req.body;
+  //const { user } = req.payload;
   try {
     const newGame = await Game.create({
-      valoration,
-      user,
       id: gameId,
-      name,
-      image,
     });
     res.json(newGame);
   } catch (error) {
@@ -24,13 +20,12 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   }
 });
 
-
 //* GET "/api/games/:gameId" => Find one game in the DB
 router.get("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
 
   try {
-    const findGame = await Game.findOne({id: gameId}); // se ha cambiado el findById por findOne hasta rellenar la base de datos 
+    const findGame = await Game.findOne({ id: gameId }); // se ha cambiado el findById por findOne hasta rellenar la base de datos
     console.log(findGame);
     res.json(findGame);
   } catch (error) {
