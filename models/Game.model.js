@@ -7,11 +7,6 @@ const gameSchema = new Schema(
       enum: [0, 1, 2, 3, 4, 5],
       default: 0,
     },
-    //TODO borrar si no es necesaria
-    // isFavourite: {
-    //   type: Boolean,
-    //   default: false,
-    // },
     comments: [
       {
         type: Schema.Types.ObjectId,
@@ -23,11 +18,6 @@ const gameSchema = new Schema(
       unique: true,
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    image: String,
   },
   {
     timestamps: true,
