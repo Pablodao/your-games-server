@@ -67,27 +67,12 @@ router.patch("/like/:commentId", isAuthenticated, async (req, res, next) => {
   const { _id } = req.payload;
 
   try {
-
-    const  dislikedComments= await User.findById(_id, {
-      dislikedComments: commentId,
-    });
-console.log("ComentarioDisliked",dislikedComments)
-    if (dislikedComments.dislikedComments.find((comment) => {comment._id === commentId})) {
-      await Comment.findByIdAndUpdate(commentId, {
-        $inc: { likes: +1 },
-        $inc: { dislikes: -1 },
-      });
-    } else {
-      await Comment.findByIdAndUpdate(commentId, {
-        $inc: { likes: +1 },
-      });
-    }
-
-    await User.findByIdAndUpdate(_id, {
-      $addToSet: { likedComments: commentId },
-      $pull: { dislikedComments: commentId },
-    });
-
+    //comprobar si el comentario ya tiene el like del usuario
+    const isCommentLiked = await Comment.findOne( { likes: _id})
+    console.log(isCommentLiked)
+    //si lo tiene quitarlo
+    // si no lo tiene comprobar que si tiene dislike
+    //si lo tiene quitarlo y agregar like 
     
 
     res.status(200).json();
@@ -102,7 +87,6 @@ router.patch("/dislike/:commentId", isAuthenticated, async (req, res, next) => {
   const { _id } = req.payload;
 
   try {
-
     const isCommentLiked = await User.findById(_id, {
       likedComments: commentId,
     });
@@ -121,7 +105,6 @@ router.patch("/dislike/:commentId", isAuthenticated, async (req, res, next) => {
       $pull: { likedComments: commentId },
     });
 
-   
     res.status(200).json();
   } catch (error) {
     next(error);

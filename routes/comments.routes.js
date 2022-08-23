@@ -7,6 +7,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 //* GET "/api/comments/:gameId" => List all comments of a game
 router.get("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
+
   try {
     const comments = await Comment.find({ game: gameId }).populate("creator");
     console.log("Comments get ", comments);
@@ -22,6 +23,7 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
   const { content, title } = req.body;
   const { _id } = req.payload;
+  
   console.log("req.body post new comment ", req.body);
   try {
     const newComment = await Comment.create({
@@ -30,6 +32,8 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
       creator: _id,
       game: gameId,
     });
+
+    await Game.findByIdAndUpdate({ id: gameId }, { $addToSet: { newComment } });
     console.log("newComment", newComment);
     res.status(200).json(newComment);
   } catch (error) {
@@ -58,11 +62,27 @@ router.patch("/:commentId", isAuthenticated, async (req, res, next) => {
 //* PATCH "/api/comments/:commentId/like"
 router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
   const { commentId } = req.params;
-  const { likes } = req.body;
+  const { _id } = req.payload;
   try {
-    await Comment.findByIdAndUpdate(commentId, {
-      likes,
-    });
+    //comprobar si el comentario tiene dislike
+    const isCommentdisliked = await Comment.findOne({ dislikes: _id });
+    const isCommentliked = await Comment.findOne({ likes: _id });
+    console.log(isCommentdisliked);
+    if (isCommentdisliked) {
+      await Comment.findByIdAndUpdate(commentId, {
+        $addToSet: { likes: _id },
+        $pull: { dislikes: _id },
+      });
+    } else if (isCommentliked) {
+      await Comment.findByIdAndUpdate(commentId, {
+        $pull: { likes: _id },
+      });
+    } else {
+      await Comment.findByIdAndUpdate(commentId, {
+        likes: _id,
+      });
+    }
+
     res.json({ message: "comment liked" });
   } catch (error) {
     console.log(error);
@@ -71,14 +91,31 @@ router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
 });
 
 //* PATCH "/api/comments/:commentId/dislike"
-router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
+router.patch("/:commentId/dislike", isAuthenticated, async (req, res, next) => {
   const { commentId } = req.params;
-  const { dislikes } = req.body;
+  const { _id } = req.payload;
+
+  //comprobar si el comentario tiene dislike
+  const isCommentliked = await Comment.findOne({ likes: _id });
+  const isCommentdisliked = await Comment.findOne({ dislikes: _id });
   try {
-    await Comment.findByIdAndUpdate(commentId, {
-      dislikes,
-    });
-    res.json({ message: "comment liked" });
+    console.log(isCommentliked);
+    if (isCommentliked) {
+      await Comment.findByIdAndUpdate(commentId, {
+        $addToSet: { dislikes: _id },
+        $pull: { likes: _id },
+      });
+    } else if (isCommentdisliked) {
+      await Comment.findByIdAndUpdate(commentId, {
+        $pull: { dislikes: _id },
+      });
+    } else {
+      await Comment.findByIdAndUpdate(commentId, {
+        dislikes: _id,
+      });
+    }
+
+    res.json({ message: "comment disliked" });
   } catch (error) {
     console.log(error);
     next(error);
@@ -88,6 +125,7 @@ router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
 //* DELETE "/api/games/:gameId/comment" => Delete one comment from the DB
 router.delete("/:commentId", isAuthenticated, async (req, res, next) => {
   const { commentId } = req.params;
+
   try {
     await Comment.findByIdAndDelete(commentId);
     res.json({ message: "comment deleted correctly" });

@@ -7,8 +7,6 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 //* POST "/api/games/:gameId" => Add one game to the DB
 router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
-  //const { valoration, name, image } = req.body;
-  //const { user } = req.payload;
   try {
     const newGame = await Game.create({
       id: gameId,
