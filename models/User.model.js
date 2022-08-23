@@ -1,16 +1,61 @@
 const { Schema, model } = require("mongoose");
 
-// TODO: Please make sure you edit the user model to whatever makes sense in this case
 const userSchema = new Schema(
   {
+    name: {
+      type: String,
+      unique: true,
+      default: "",
+    },
+
     username: {
       type: String,
-      // unique: true -> Ideally, should be unique, but its up to you
+      unique: true,
+      require: true,
     },
-    password: String,
+    email: {
+      type: String,
+
+      unique: true,
+      require: true,
+    },
+
+    password: {
+      type: String,
+      require: true,
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    rank: {
+      type: String,
+      enum: ["bronze, silver, gold"],
+    },
+    favourites: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Games",
+      },
+    ],
+    likedComments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    dislikedComments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    accountClosed: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
-    // this second object adds extra properties: `createdAt` and `updatedAt`
     timestamps: true,
   }
 );
