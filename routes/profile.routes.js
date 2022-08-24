@@ -68,12 +68,11 @@ router.patch("/like/:commentId", isAuthenticated, async (req, res, next) => {
 
   try {
     //comprobar si el comentario ya tiene el like del usuario
-    const isCommentLiked = await Comment.findOne( { likes: _id})
-    console.log(isCommentLiked)
+    const isCommentLiked = await Comment.findOne({ likes: _id });
+    console.log(isCommentLiked);
     //si lo tiene quitarlo
     // si no lo tiene comprobar que si tiene dislike
-    //si lo tiene quitarlo y agregar like 
-    
+    //si lo tiene quitarlo y agregar like
 
     res.status(200).json();
   } catch (error) {
@@ -110,5 +109,32 @@ router.patch("/dislike/:commentId", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
+
+//* PATCH "/api/profile/like/:gameId" => Add a  game to user favourite games
+router.patch("/favourites/:gameId", isAuthenticated, async (req, res, next) => {
+  const { gameId } = req.params;
+  const { _id } = req.payload;
+  try {
+    const user = await User.findById(_id);
+    console.log(user.favourites);
+
+    if (user.favourites.includes(gameId)) {
+      const removeFromFavourite = await User.findByIdAndUpdate(_id, {
+        $pull: { favourites: gameId },
+      });
+      console.log("elemento quitado de favoritos", removeFromFavourite);
+    } else {
+      const addToFavourite = await User.findByIdAndUpdate(_id, {
+        $addToSet: { favourites: gameId },
+      });
+      console.log("elemento agregado a favoritos", addToFavourite);
+    }
+    res.status(200).json();
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 
 module.exports = router;
