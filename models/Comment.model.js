@@ -15,8 +15,8 @@ const commentSchema = new Schema(
       ref: "User",
     },
     game: {
-      type: Schema.Types.ObjectId,
-      ref: "Game",
+      type: String,
+      required: true,
     },
     isEdited: {
       type: Boolean,
