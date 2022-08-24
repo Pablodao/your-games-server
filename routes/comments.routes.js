@@ -23,7 +23,8 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
   const { content, title } = req.body;
   const { _id } = req.payload;
-  
+
+  console.log("gameId", gameId);
   console.log("req.body post new comment ", req.body);
   try {
     const newComment = await Comment.create({
@@ -33,7 +34,7 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
       game: gameId,
     });
 
-    await Game.findByIdAndUpdate({ id: gameId }, { $addToSet: { newComment } });
+    await Game.findOneAndUpdate({ game: gameId }, { $addToSet: { newComment } });
     console.log("newComment", newComment);
     res.status(200).json(newComment);
   } catch (error) {
