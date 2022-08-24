@@ -30,7 +30,8 @@ const userSchema = new Schema(
     },
     rank: {
       type: String,
-      enum: ["bronze, silver, gold"],
+      enum: ["Bronze, Silver, Gold"],
+      default: "bronze"
     },
     favourites: [
       {
