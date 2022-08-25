@@ -31,12 +31,11 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
 //* PATCH "/api/profile/:id/edit" => Edit user in DB
 router.patch("/:id/edit", isAuthenticated, async (req, res, next) => {
   const { id } = req.params;
-  const { name, email, avatar } = req.body;
+  const { description, avatar } = req.body;
   try {
     const editedUser = await User.findByIdAndUpdate(id, {
-      name,
-      email,
       avatar,
+      description,
     });
     console.log(editedUser);
     res.json(editedUser);
