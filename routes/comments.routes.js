@@ -23,7 +23,7 @@ router.get("/user/:userId", isAuthenticated, async (req, res, next) => {
   const { userId } = req.params;
 
   try {
-    const comments = await Comment.find({ creator: userId });
+    const comments = await Comment.find({ creator: userId }).populate("creator");
     console.log(comments.length);
     if (comments.length < 3) {
       await User.findByIdAndUpdate(userId, { rank: "Bronze" });
