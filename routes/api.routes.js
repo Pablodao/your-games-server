@@ -27,7 +27,7 @@ router.get("/details/:gameId", async (req, res, next) => {
     const response = await axios(
       `https://api.rawg.io/api/games/${gameId}?key=848748eade3647ecbf3ac299d1c7b50c`
     );
-    console.log("RESPONSE",response.data)
+   
     res.status(200).json(response.data);
   } catch (error) {
     next(error);
