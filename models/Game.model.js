@@ -7,16 +7,13 @@ const gameSchema = new Schema(
       enum: [0, 1, 2, 3, 4, 5],
       default: 0,
     },
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
-    id: {
+    apiId: {
       type: String,
-      unique: true,
-      required: true,
+      require: true
+    },
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {

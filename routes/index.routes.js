@@ -21,5 +21,14 @@ router.use("/games", gamesRoutes)
 const commentsRoutes = require("./comments.routes")
 router.use("/comments", commentsRoutes)
 
+//* Api routes
+const apiRoutes = require("./api.routes")
+router.use("/apiCall",apiRoutes)
+
+//* Upload img routes
+const uploadRoutes = require("./upload.routes")
+router.use("/upload", uploadRoutes)
+
+
 module.exports = router;
 

@@ -7,7 +7,6 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 
 //* POST "/api/auth/signup" => Create user in DB
 router.post("/signup", async (req, res, next) => {
-  console.log("req.body /signup", req.body);
   const { username, email, password } = req.body;
 
   //! GC
@@ -69,14 +68,14 @@ router.post("/signup", async (req, res, next) => {
 
     res.status(201).json();
   } catch (error) {
-    console.log("Signup error", error);
+   
     next(error);
   }
 });
 
 //* POST "./api/auth/login" => Validate user credentials
 router.post("/login", async (req, res, next) => {
-  console.log("req.body /login", req.body);
+
   const { access, password } = req.body;
 
   //! GC
@@ -97,14 +96,12 @@ router.post("/login", async (req, res, next) => {
     const foundUser = await User.findOne({
       $or: [{ username: access }, { email: access }],
     });
-    console.log("foundUser login ", foundUser);
     if (foundUser === null) {
       res.status(400).json({ errorMessage: "Usuario no encontrado" });
       return;
     }
     //! Valid password
     const isPasswordValid = await bcrypt.compare(password, foundUser.password);
-    console.log("isPasswordValid", isPasswordValid);
     if (isPasswordValid === false) {
       res.status(400).json({ errorMessage: "Contraseña no válida" });
     }

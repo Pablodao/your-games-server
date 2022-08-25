@@ -3,26 +3,54 @@ const User = require("../models/User.model");
 const Comment = require("../models/Comment.model");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
-//* GET "/api/email" =>  Find user in DB
-router.get("/my-profile", isAuthenticated, async (req, res, next) => {
-  console.log("req.payload", req.payload);
+
+//* PATCH "/api/profile/favourites/:gameId" => Add a  game to user favourite games
+router.patch("/favourites/:gameId", isAuthenticated, async (req, res, next) => {
+  const { gameId } = req.params;
+  const { _id } = req.payload;
+  const { gameImg, gameName } = req.body;
+
+  try {
+    const user = await User.findById(_id);
+    const isFavourite =
+      user.favourites.filter((eachFavourite) => {
+        console.log("eachFavourite", eachFavourite);
+        return eachFavourite.gameId === gameId;
+      }).length > 0;
+    console.log("FAVOURITE", isFavourite);
+    if (isFavourite) {
+      const removeFromFavourite = await User.findByIdAndUpdate(_id, {
+        $pull: { favourites: { gameId, gameImg, gameName } },
+      });
+      console.log("elemento quitado de favoritos", removeFromFavourite);
+    } else {
+      const addToFavourite = await User.findByIdAndUpdate(_id, {
+        $addToSet: { favourites: { gameId, gameImg, gameName } },
+      });
+      console.log("elemento agregado a favoritos", addToFavourite);
+    }
+    res.status(200).json();
+  } catch (error) {
+    next(error);
+  }
+});
+//* GET "/api/profile/favourites" =>  find user's favourite games
+router.get("/favourites", isAuthenticated, async (req, res, next) => {
   const { _id } = req.payload;
   try {
-    const findUser = await User.findById(_id);
-    console.log(findUser);
-    res.json(findUser);
+    const user = await User.findById(_id).select("favourites");
+    console.log("USER", user);
+    res.json(user);
   } catch (error) {
     console.log("Error user /", error);
     next(error);
   }
 });
-
 //* GET "/api/profile/:id" =>  Find user in DB
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   const { id } = req.params;
   try {
     const findUser = await User.findById(id);
-    console.log(findUser);
     res.json(findUser);
   } catch (error) {
     console.log("Error user /", error);
@@ -30,15 +58,14 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-//* PATCH "/api/profile/edit" => Edit user in DB
+//* PATCH "/api/profile/:id/edit" => Edit user in DB
 router.patch("/:id/edit", isAuthenticated, async (req, res, next) => {
   const { id } = req.params;
-  const { name, email, avatar } = req.body;
+  const { description, avatar } = req.body;
   try {
     const editedUser = await User.findByIdAndUpdate(id, {
-      name,
-      email,
       avatar,
+      description,
     });
     console.log(editedUser);
     res.json(editedUser);
@@ -55,57 +82,6 @@ router.patch("/close-account", isAuthenticated, async (req, res, next) => {
       accountClosed: true,
     });
     res.status(200).json({ message: "Acount closed ! " });
-  } catch (error) {
-    next(error);
-  }
-});
-
-//TODO Como sumar likes y dislikes en findByIdAndUpdate
-//* PATCH /api/profile/like/:commentId" => Add comment to likedComments
-router.patch("/like/:commentId", isAuthenticated, async (req, res, next) => {
-  const { commentId } = req.params;
-  const { _id } = req.payload;
-
-  try {
-    //comprobar si el comentario ya tiene el like del usuario
-    const isCommentLiked = await Comment.findOne( { likes: _id})
-    console.log(isCommentLiked)
-    //si lo tiene quitarlo
-    // si no lo tiene comprobar que si tiene dislike
-    //si lo tiene quitarlo y agregar like 
-    
-
-    res.status(200).json();
-  } catch (error) {
-    next(error);
-  }
-});
-
-//* PATCH /api/profile/dislike/:commentId" => Add comment to dislikedComments
-router.patch("/dislike/:commentId", isAuthenticated, async (req, res, next) => {
-  const { commentId } = req.params;
-  const { _id } = req.payload;
-
-  try {
-    const isCommentLiked = await User.findById(_id, {
-      likedComments: commentId,
-    });
-    if (isCommentLiked) {
-      await Comment.findByIdAndUpdate(commentId, {
-        $inc: { dislikes: 1 },
-        $inc: { likes: -1 },
-      });
-    } else {
-      await Comment.findByIdAndUpdate(commentId, {
-        $inc: { dislikes: 1 },
-      });
-    }
-    await User.findByIdAndUpdate(_id, {
-      $addToSet: { dislikedComments: commentId },
-      $pull: { likedComments: commentId },
-    });
-
-    res.status(200).json();
   } catch (error) {
     next(error);
   }

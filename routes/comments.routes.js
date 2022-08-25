@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Game = require("../models/Game.model");
 const Comment = require("../models/Comment.model");
-
+const User = require("../models/User.model");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
 //* GET "/api/comments/:gameId" => List all comments of a game
@@ -10,7 +10,28 @@ router.get("/:gameId", isAuthenticated, async (req, res, next) => {
 
   try {
     const comments = await Comment.find({ game: gameId }).populate("creator");
-    console.log("Comments get ", comments);
+
+    res.json(comments);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+//* GET "/api/comments/user/:userId" => List all comment of a user
+router.get("/user/:userId", isAuthenticated, async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const comments = await Comment.find({ creator: userId }).populate("creator");
+    console.log(comments.length);
+    if (comments.length < 3) {
+      await User.findByIdAndUpdate(userId, { rank: "Bronze" });
+    } else if (comments.length >= 3 && comments.length < 10) {
+      await User.findByIdAndUpdate(userId, { rank: "Silver" });
+    } else {
+      await User.findByIdAndUpdate(userId, { rank: "Gold" });
+    }
     res.json(comments);
   } catch (error) {
     console.log(error);
@@ -23,8 +44,7 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
   const { content, title } = req.body;
   const { _id } = req.payload;
-  
-  console.log("req.body post new comment ", req.body);
+
   try {
     const newComment = await Comment.create({
       title,
@@ -33,8 +53,11 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
       game: gameId,
     });
 
-    await Game.findByIdAndUpdate({ id: gameId }, { $addToSet: { newComment } });
-    console.log("newComment", newComment);
+    await Game.findOneAndUpdate(
+      { game: gameId },
+      { $addToSet: { newComment } }
+    );
+
     res.status(200).json(newComment);
   } catch (error) {
     console.log(error);
@@ -67,7 +90,7 @@ router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
     //comprobar si el comentario tiene dislike
     const isCommentdisliked = await Comment.findOne({ dislikes: _id });
     const isCommentliked = await Comment.findOne({ likes: _id });
-    console.log(isCommentdisliked);
+
     if (isCommentdisliked) {
       await Comment.findByIdAndUpdate(commentId, {
         $addToSet: { likes: _id },
@@ -99,7 +122,6 @@ router.patch("/:commentId/dislike", isAuthenticated, async (req, res, next) => {
   const isCommentliked = await Comment.findOne({ likes: _id });
   const isCommentdisliked = await Comment.findOne({ dislikes: _id });
   try {
-    console.log(isCommentliked);
     if (isCommentliked) {
       await Comment.findByIdAndUpdate(commentId, {
         $addToSet: { dislikes: _id },

@@ -2,12 +2,6 @@ const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema(
   {
-    name: {
-      type: String,
-      unique: true,
-      default: "",
-    },
-
     username: {
       type: String,
       unique: true,
@@ -28,14 +22,17 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    description: String,
     rank: {
       type: String,
-      enum: ["bronze, silver, gold"],
+      enum: ["Bronze", "Silver", "Gold"],
+      default: "Bronze",
     },
     favourites: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Games",
+        gameImg: String,
+        gameName: String,
+        gameId: String,
       },
     ],
     likedComments: [
