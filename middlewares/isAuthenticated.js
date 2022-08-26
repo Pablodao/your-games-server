@@ -5,9 +5,7 @@ const isAuthenticated = expressjwt({
   algorithms: ["HS256"],
   requestProperty: "payload",
   getToken: (req) => {
-   
     if (req.headers === undefined || req.headers.authorization === undefined) {
-      console.log("no hay token");
       return null;
     }
 
@@ -16,11 +14,8 @@ const isAuthenticated = expressjwt({
     const theToken = tokenArr[1];
 
     if (tokenType !== "Bearer") {
-      console.log("Token de tipo invalido");
       return null;
     }
-
-    console.log("Token extraido y enviado ");
 
     return theToken;
   },

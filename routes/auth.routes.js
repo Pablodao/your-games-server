@@ -68,14 +68,12 @@ router.post("/signup", async (req, res, next) => {
 
     res.status(201).json();
   } catch (error) {
-   
     next(error);
   }
 });
 
 //* POST "./api/auth/login" => Validate user credentials
 router.post("/login", async (req, res, next) => {
-
   const { access, password } = req.body;
 
   //! GC
@@ -111,22 +109,19 @@ router.post("/login", async (req, res, next) => {
       username: foundUser.username,
       email: foundUser.email,
     };
-    console.log("payload", payload);
-    //TODO Cambiar el tiempo de expiracion
+
     const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
       algorithm: "HS256",
       expiresIn: "200h",
     });
-    console.log("authToken login", authToken);
+
     res.status(200).json({ authToken: authToken });
   } catch (error) {
-    console.log("Login error", error);
     next(error);
   }
 });
 //* GET "./api/auth/verify" => Verify user is validated and active
 router.get("/verify", isAuthenticated, (req, res, next) => {
-  console.log("req.payload verify ", req.payload);
   res.json(req.payload);
 });
 

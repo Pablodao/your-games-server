@@ -13,7 +13,6 @@ router.get("/:gameId", isAuthenticated, async (req, res, next) => {
 
     res.json(comments);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -23,8 +22,9 @@ router.get("/user/:userId", isAuthenticated, async (req, res, next) => {
   const { userId } = req.params;
 
   try {
-    const comments = await Comment.find({ creator: userId }).populate("creator");
-    console.log(comments.length);
+    const comments = await Comment.find({ creator: userId }).populate(
+      "creator"
+    );
     if (comments.length < 3) {
       await User.findByIdAndUpdate(userId, { rank: "Bronze" });
     } else if (comments.length >= 3 && comments.length < 10) {
@@ -34,7 +34,6 @@ router.get("/user/:userId", isAuthenticated, async (req, res, next) => {
     }
     res.json(comments);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -60,7 +59,6 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
 
     res.status(200).json(newComment);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -77,7 +75,6 @@ router.patch("/:commentId", isAuthenticated, async (req, res, next) => {
     });
     res.json({ message: "comment edited correctly" });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -108,7 +105,6 @@ router.patch("/:commentId/like", isAuthenticated, async (req, res, next) => {
 
     res.json({ message: "comment liked" });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -139,7 +135,6 @@ router.patch("/:commentId/dislike", isAuthenticated, async (req, res, next) => {
 
     res.json({ message: "comment disliked" });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -152,7 +147,6 @@ router.delete("/:commentId", isAuthenticated, async (req, res, next) => {
     await Comment.findByIdAndDelete(commentId);
     res.json({ message: "comment deleted correctly" });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });

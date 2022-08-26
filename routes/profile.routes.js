@@ -3,7 +3,6 @@ const User = require("../models/User.model");
 const Comment = require("../models/Comment.model");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
-
 //* PATCH "/api/profile/favourites/:gameId" => Add a  game to user favourite games
 router.patch("/favourites/:gameId", isAuthenticated, async (req, res, next) => {
   const { gameId } = req.params;
@@ -14,20 +13,16 @@ router.patch("/favourites/:gameId", isAuthenticated, async (req, res, next) => {
     const user = await User.findById(_id);
     const isFavourite =
       user.favourites.filter((eachFavourite) => {
-        console.log("eachFavourite", eachFavourite);
         return eachFavourite.gameId === gameId;
       }).length > 0;
-    console.log("FAVOURITE", isFavourite);
     if (isFavourite) {
       const removeFromFavourite = await User.findByIdAndUpdate(_id, {
         $pull: { favourites: { gameId, gameImg, gameName } },
       });
-      console.log("elemento quitado de favoritos", removeFromFavourite);
     } else {
       const addToFavourite = await User.findByIdAndUpdate(_id, {
         $addToSet: { favourites: { gameId, gameImg, gameName } },
       });
-      console.log("elemento agregado a favoritos", addToFavourite);
     }
     res.status(200).json();
   } catch (error) {
@@ -39,10 +34,8 @@ router.get("/favourites", isAuthenticated, async (req, res, next) => {
   const { _id } = req.payload;
   try {
     const user = await User.findById(_id).select("favourites");
-    console.log("USER", user);
     res.json(user);
   } catch (error) {
-    console.log("Error user /", error);
     next(error);
   }
 });
@@ -53,7 +46,6 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     const findUser = await User.findById(id);
     res.json(findUser);
   } catch (error) {
-    console.log("Error user /", error);
     next(error);
   }
 });
@@ -67,7 +59,6 @@ router.patch("/:id/edit", isAuthenticated, async (req, res, next) => {
       avatar,
       description,
     });
-    console.log(editedUser);
     res.json(editedUser);
   } catch (error) {
     next(error);

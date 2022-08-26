@@ -18,7 +18,6 @@ router.post("/:gameId", isAuthenticated, async (req, res, next) => {
     });
     res.json(newGame);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -34,7 +33,6 @@ router.get("/:gameId", isAuthenticated, async (req, res, next) => {
 
     res.json(findGame);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -46,7 +44,6 @@ router.get("/:gameId/valorations", isAuthenticated, async (req, res, next) => {
     const findGame = await Game.find({ apiId: gameId }).select("valoration");
     res.json(findGame);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });
@@ -63,13 +60,11 @@ router.patch("/:gameId", isAuthenticated, async (req, res, next) => {
         valoration: valoration,
       }
     );
-    console.log("game valoration edit ", GameValoration);
 
     res.status(200).json();
   } catch (error) {
     next(error);
   }
 });
-
 
 module.exports = router;

@@ -9,7 +9,7 @@ const gameSchema = new Schema(
     },
     apiId: {
       type: String,
-      require: true
+      require: true,
     },
     creator: {
       type: Schema.Types.ObjectId,
